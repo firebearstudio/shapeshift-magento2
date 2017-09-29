@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
+ * @author   : Firebear Studio <fbeardev@gmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <shape_shift>
+                <active>1</active>
+                <model>Firebear\ShapeShift\Model\Methods\Shapeshift</model>
+                <order_status>pending</order_status>
+                <title>ShapeShift</title>
+                <allowspecific>0</allowspecific>
+                <group>shapeshift</group>
+            </shape_shift>
+        </payment>
+    </default>`
+</config>
