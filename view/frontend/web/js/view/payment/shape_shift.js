@@ -8,8 +8,8 @@ define(
         'use strict';
         rendererList.push(
             {
-                type     : 'shapeshift',
-                component: 'Firebear_ShapeShift/js/view/payment/method-renderer/shapeshift'
+                type     : 'shape_shift',
+                component: 'Firebear_ShapeShift/js/view/payment/method-renderer/shape_shift'
             }
         );
         /** Add view logic here if needed */

@@ -27,7 +27,7 @@ define(
             },
 
             getCode: function() {
-                return 'shapeshift';
+                return 'shape_shift';
             },
 
             getData: function() {
@@ -40,7 +40,7 @@ define(
             },
 
             getTransactionResults: function() {
-                return _.map(window.checkoutConfig.payment.sample_gateway.transactionResults, function(value, key) {
+                return _.map(window.checkoutConfig.payment.shape_shift.transactionResults, function(value, key) {
                     return {
                         'value': key,
                         'transaction_result': value

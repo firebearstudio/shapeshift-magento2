@@ -1,10 +1,5 @@
 <?xml version="1.0"?>
-<!--
-/**
- * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
- * @author   : Firebear Studio <fbeardev@gmail.com>
- */
--->
+
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="checkout.root">
@@ -21,10 +16,9 @@
                                                 <item name="payment" xsi:type="array">
                                                     <item name="children" xsi:type="array">
                                                         <item name="renders" xsi:type="array">
-                                                            <!-- merge payment method renders here -->
                                                             <item name="children" xsi:type="array">
                                                                 <item name="shape_shift" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Firebear_ShapeShift/js/view/payment/shapeshift</item>
+                                                                    <item name="component" xsi:type="string">Firebear_ShapeShift/js/view/payment/shape_shift</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="shape_shift" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>

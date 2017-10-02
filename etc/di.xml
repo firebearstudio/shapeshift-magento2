@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="ShapeShiftGatewayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\Firebear\ShapeShift\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Firebear\ShapeShift\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">ShapeShiftGatewayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">ShapeShiftGatewayCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="ShapeShiftGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\Firebear\SHapeShift\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Logger, initialized with SamplePaymentGatewayConfig -->
+    <virtualType name="ShapeShiftGatewayLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Firebear\ShapeShift\Gateway\Http\Client\ClientMock">
+        <arguments>
+            <argument name="logger" xsi:type="object">ShapeShiftGatewayLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="ShapeShiftGatewayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">ShapeShiftGatewayAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">ShapeShiftGatewayCaptureCommand</item>
+                <item name="void" xsi:type="string">ShapeShiftGatewayVoidCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="ShapeShiftGatewayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">ShapeShiftGatewayAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">ShapeShiftGatewayResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Firebear\ShapeShift\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Firebear\ShapeShift\Gateway\Http\Client\ClientMock</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="ShapeShiftGatewayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Firebear\ShapeShift\Gateway\Request\AuthorizationRequest</item>
+                <item name="mockData" xsi:type="string">Firebear\ShapeShift\Gateway\Request\MockDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Firebear\ShapeShift\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Capture command -->
+    <virtualType name="ShapeShiftGatewayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Magento\SamplePaymentGateway\Gateway\Request\CaptureRequest</argument>
+            <argument name="handler" xsi:type="object">Firebear\ShapeShift\Gateway\Response\TxnIdHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Firebear\ShapeShift\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">Magento\SamplePaymentGateway\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">Firebear\ShapeShift\Gateway\Http\Client\ClientMock</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request -->
+    <type name="Magento\SamplePaymentGateway\Gateway\Request\CaptureRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Void command -->
+    <virtualType name="ShapeShiftGatewayVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Magento\SamplePaymentGateway\Gateway\Request\VoidRequest</argument>
+            <argument name="handler" xsi:type="object">Firebear\ShapeShift\Gateway\Response\TxnIdHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Firebear\ShapeShift\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">Magento\SamplePaymentGateway\Gateway\Validator\ResponseCodeValidator</argument>
+            <argument name="client" xsi:type="object">Firebear\ShapeShift\Gateway\Http\Client\ClientMock</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void Request -->
+    <type name="Magento\SamplePaymentGateway\Gateway\Request\VoidRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Response handlers -->
+    <virtualType name="ShapeShiftGatewayResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">Firebear\ShapeShift\Gateway\Response\TxnIdHandler</item>
+                <item name="fraud" xsi:type="string">Firebear\ShapeShift\Gateway\Response\FraudHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="ShapeShiftGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ShapeShiftGatewayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ShapeShiftGatewayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\SamplePaymentGateway\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
+        </arguments>
+    </type>
+</config>
