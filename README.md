@@ -11,4 +11,8 @@ Meet the advanced Bitcoin payment option for your ecommerce website - ShapeShift
 It doesn’t require name, email, or location to send funds. A specific address to which you should send funds. The need to create an account to run a transaction is completely eliminated.
 A “No Fiat” policy is another feature of the platform and module. But you can run fiat withdrawal via other services that support fiat, for instance, Coinbase. Thus, the usage of banks or political currencies is eliminated within the platform.
 
+With ShapeShift, what you see is what you get. The exchange rate shown is exactly what you'll receive, minus only the "miner fee." So you don't pay any transaction fee which is typical for traditional payment gateways! Learn more - https://info.shapeshift.io/about 
+
+Supported coins : 1ST,ANT,BAT,BCH,BTC,BCY,BLK,BNT,BTS,CLAM,CVC,DASH,DCR,DGB,DGD,DOGE,EDG,EMC,EOS,ETH,ETC,FCT,FUN,GAME,GNO,GNT,GUP,ICN,KMD,LBC,LSK,LTC,MAID,MLN,MSCN,MONA,MTL,NMC,NMR,NVC,PAY,USNBT,NXT,OMG,POT,PPC,QTUM,RDD,REP,RLC,SC,SJCX,SNGLS,SNT,START,STEEM,SWT,TKN,USDT,VRC,VTC,VOX,TRST,WAVES,WINGS,XCP,XMR,XRP,ZEC,ZRX
+
 Another cryptocurrency integration for Magento - <a href="https://firebearstudio.com/coinpayments-for-magento-2-bitcoin-ethereum-cryptocurrency.html">FireBear CoinPayments for Magento 2</a>
