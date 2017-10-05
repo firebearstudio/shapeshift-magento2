@@ -2,7 +2,7 @@
 
 <b>Work in progress - not ready for installation yet!</b>
 
-Accept cryptocurrency payments on Magento 2 by ShapeShift exchange API. Read more - https://firebearstudio.com/blog/firebear-shapeshift-magento-2-extension.html 
+Accept cryptocurrency payments on Magento 2 by ShapeShift exchange API. <a href="https://firebearstudio.com/blog/firebear-shapeshift-magento-2-extension.html">Read more on our blog</a> 
 
 Meet the advanced Bitcoin payment option for your ecommerce website - ShapeShift Magento 2 extension. It is a cryptocurrency converter that supports Bitcoin, Ethereum, and tons of other altcoins. Learn what is BitCoin and create BitCoin wallet - https://www.bitcoin.com/ 
 
