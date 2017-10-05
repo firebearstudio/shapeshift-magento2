@@ -1,4 +1,4 @@
-# ShapeShift for Magento2 - Accept BitCoin, Ethereum and other cryptocurrencies 
+# ShapeShift for Magento2 - Accept BitCoin, Ethereum and other cryptocurrencies without transations fee 
 
 <b>Work in progress - not ready for installation yet!</b>
 
