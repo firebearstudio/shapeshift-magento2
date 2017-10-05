@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="payment_method_assign_data">
         <observer name="sample_payment_gateway_data_assign" instance="Firebear\ShapeShift\Observer\DataAssignObserver" />
+    </event>
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="shapeshift_after_place_order" instance="Firebear\ShapeShift\Observer\AfterPlaceOrder" />
     </event>
 </config>

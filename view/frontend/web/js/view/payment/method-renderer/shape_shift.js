@@ -6,22 +6,26 @@
 /*global define*/
 define(
     [
-        'Magento_Checkout/js/view/payment/default'
+        'Magento_Checkout/js/view/payment/default',
+        'mage/url',
+        'jquery',
+        'jquery/ui'
     ],
-    function (Component) {
+    function (Component, url) {
         'use strict';
 
         return Component.extend({
             defaults: {
                 template: 'Firebear_ShapeShift/payment/form',
-                transactionResult: ''
+                transactionResult: '',
+                returnAddress: ''
             },
 
             initObservable: function () {
 
                 this._super()
                     .observe([
-                        'transactionResult'
+                        'transactionResult', 'returnAddress'
                     ]);
                 return this;
             },
@@ -34,9 +38,18 @@ define(
                 return {
                     'method': this.item.method,
                     'additional_data': {
-                        'transaction_result': this.transactionResult()
+                        'transaction_result': this.transactionResult(),
+                        'return_address': this.returnAddress()
                     }
                 };
+            },
+            afterPlaceOrder: function () {
+                jQuery.ajax( {
+                    url: url.build('shapeshift/api/index'),
+                    type: 'POST',
+                    dataType: "json",
+                    data: {"returnAddress": this.returnAddress()}
+                });
             },
 
             getTransactionResults: function() {

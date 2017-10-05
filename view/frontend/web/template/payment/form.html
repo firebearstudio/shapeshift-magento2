@@ -41,6 +41,12 @@
                                   value: transactionResult">
                 </select>
             </div>
+            <label data-bind="attr: {for: getCode() + '_return_address'}" class="label">
+                <span><!-- ko i18n: 'Return Address'--><!-- /ko --></span>
+            </label>
+            <div class="control">
+                <input type="text" name="payment[return_address]" class="input-text" data-bind="value: returnAddress"/>
+            </div>
         </div>
 
         <div class="actions-toolbar">
