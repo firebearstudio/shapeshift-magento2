@@ -7,14 +7,22 @@
 namespace Firebear\ShapeShift\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
-use Firebear\ShapeShift\Gateway\Http\Client\ClientMock;
+use Firebear\ShapeShift\Model\Client\ShapeShiftClientApiFactory;
 
 /**
  * Class ConfigProvider
  */
 final class ConfigProvider implements ConfigProviderInterface
 {
+    private $shapeShiftClientApiFactory;
+
+    public function __construct(ShapeShiftClientApiFactory $shapeShiftClientApiFactory)
+    {
+        $this->shapeShiftClientApiFactory = $shapeShiftClientApiFactory;
+    }
+
     const CODE = 'shape_shift';
+
     /**
      * Retrieve assoc array of checkout configuration
      *
@@ -22,15 +30,14 @@ final class ConfigProvider implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        return [
+        $shapeShiftClientApiModel = $this->shapeShiftClientApiFactory->create();
+        $configArray = [
             'payment' => [
                 self::CODE => [
-                    'transactionResults' => [
-                        ClientMock::SUCCESS => __('Success'),
-                        ClientMock::FAILURE => __('Fraud')
-                    ]
+                    'currencyCode' => $shapeShiftClientApiModel->getAvailableCurrency()
                 ]
             ]
         ];
+        return $configArray;
     }
 }

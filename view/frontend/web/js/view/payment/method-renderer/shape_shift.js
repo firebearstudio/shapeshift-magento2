@@ -6,57 +6,112 @@
 /*global define*/
 define(
     [
+        'ko',
         'Magento_Checkout/js/view/payment/default',
-        'mage/url',
+        'Magento_Checkout/js/model/quote',
         'jquery',
-        'jquery/ui'
+        'Magento_Checkout/js/action/place-order',
+        'Magento_Checkout/js/action/select-payment-method',
+        'Magento_Customer/js/model/customer',
+        'Magento_Checkout/js/checkout-data',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'mage/url',
+        'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/action/redirect-on-success'
     ],
-    function (Component, url) {
+    function (ko, Component, quote, $, placeOrderAction, selectPaymentMethodAction, customer, checkoutData, additionalValidators, url, fullScreenLoader, redirectOnSuccessAction) {
         'use strict';
 
         return Component.extend({
             defaults: {
                 template: 'Firebear_ShapeShift/payment/form',
-                transactionResult: '',
-                returnAddress: ''
+                currencyCode: '',
+                returnAddress: '',
+                depositAddress: '',
+                newErrorMessage: ko.observable(false)
             },
 
             initObservable: function () {
 
                 this._super()
                     .observe([
-                        'transactionResult', 'returnAddress'
+                        'currencyCode', 'returnAddress'
                     ]);
                 return this;
             },
 
-            getCode: function() {
+            getCode: function () {
                 return 'shape_shift';
             },
 
-            getData: function() {
+            getData: function () {
                 return {
                     'method': this.item.method,
                     'additional_data': {
-                        'transaction_result': this.transactionResult(),
+                        'currency_code': this.currencyCode(),
                         'return_address': this.returnAddress()
                     }
                 };
             },
             afterPlaceOrder: function () {
-                jQuery.ajax( {
+                console.log(this.depositAddress);
+            },
+            placeOrder: function (data, event) {
+                var self = this;
+
+                if (event) {
+                    event.preventDefault();
+                }
+                jQuery.ajax({
                     url: url.build('shapeshift/api/index'),
                     type: 'POST',
                     dataType: "json",
-                    data: {"returnAddress": this.returnAddress()}
+                    showLoader: true,
+                    data: {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
+                    success: function (data) {
+                        self.depositAddress = data;
+                        if (self.validate() && additionalValidators.validate()) {
+                            self.isPlaceOrderActionAllowed(false);
+
+                            self.getPlaceOrderDeferredObject()
+                                .fail(
+                                    function () {
+                                        self.isPlaceOrderActionAllowed(true);
+                                    }
+                                ).done(
+                                function () {
+                                    self.afterPlaceOrder();
+
+                                    if (self.redirectAfterPlaceOrder) {
+                                        redirectOnSuccessAction.execute();
+                                    }
+                                }
+                            );
+
+                            return true;
+                        }
+                    },
+                    error: function(data){
+                        self.isPlaceOrderActionAllowed(true);
+                        self.newErrorMessage(data.responseText);
+                    }
                 });
+
+                return false;
+
+            },
+            getPlaceOrderDeferredObject: function () {
+                return $.when(
+                    placeOrderAction(this.getData(), this.messageContainer)
+                );
             },
 
-            getTransactionResults: function() {
-                return _.map(window.checkoutConfig.payment.shape_shift.transactionResults, function(value, key) {
+            getAvailableCurrency: function () {
+                console.log(window.checkoutConfig.payment.shape_shift.currencyCode);
+                return _.map(window.checkoutConfig.payment.shape_shift.currencyCode, function (value, key) {
                     return {
                         'value': key,
-                        'transaction_result': value
+                        'currency_code': value
                     }
                 });
             }

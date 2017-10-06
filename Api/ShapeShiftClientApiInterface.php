@@ -9,15 +9,6 @@ namespace Firebear\ShapeShift\Api;
 interface ShapeShiftClientApiInterface
 {
     /**
-     * @param $withdrawAdd
-     * @param $returnAdd
-     * @param string $email
-     * @param int $amount
-     * @return mixed
-     */
-    public function Setup($withdrawAdd, $returnAdd, $email = "shapeshift@nepalbit.co.in", $amount = 0);
-
-    /**
      * @param $depoAddress
      * @param int $amount
      * @return mixed

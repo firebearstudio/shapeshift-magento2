@@ -8,6 +8,7 @@ namespace Firebear\ShapeShift\Controller\Api;
 
 use Psr\Log\LoggerInterface;
 use Firebear\ShapeShift\Model\Client\ShapeShiftClientApiFactory;
+use Magento\Framework\Controller\ResultFactory;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
@@ -32,6 +33,9 @@ class Index extends \Magento\Framework\App\Action\Action
     private $checkoutSession;
     private $shapeShiftClientApi;
     private $shapeShiftHelper;
+    private $currency;
+    private $storeManager;
+    private $resultJsonFactory;
 
     /**
      * Index constructor.
@@ -50,7 +54,10 @@ class Index extends \Magento\Framework\App\Action\Action
         \Magento\Checkout\Model\Session $checkoutSession,
         ShapeShiftClientApiFactory $shapeShiftClientApi,
         \Firebear\ShapeShift\Helper\Data $shapeShiftHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Directory\Model\Currency $currency,
+        \Magento\Framework\Controller\Result\JsonFactory    $resultJsonFactory
     )
     {
         $this->config = $config;
@@ -61,6 +68,9 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->checkoutSession = $checkoutSession;
         $this->shapeShiftClientApi = $shapeShiftClientApi;
         $this->shapeShiftHelper = $shapeShiftHelper;
+        $this->currency = $currency;
+        $this->storeManager = $storeManager;
+        $this->resultJsonFactory = $resultJsonFactory;
         parent::__construct($context);
     }
 
@@ -70,7 +80,8 @@ class Index extends \Magento\Framework\App\Action\Action
         $orderId = $this->checkoutSession->getLastRealOrder()->getId();
         $returnAddress = $this->getRequest()->getParam('returnAddress');
         $depositAddress = $this->shapeShiftHelper->getGeneralConfig('deposit_address');
-        $amount = $this->shapeShiftHelper->convertCurrency(1);
+        $currencyCode = $this->storeManager->getStore()->getCurrentCurrencyCode();
+        $amount = $this->shapeShiftHelper->convertCurrency($this->cart->getQuote()->getGrandTotal(), $currencyCode);
         $this->logger->info("DEPOSIT ADDRESS: ".$depositAddress);
         $this->logger->info("RETURN ADDRESS: ".$returnAddress);
         $this->logger->info("AMOUNT: ".$amount);
@@ -79,14 +90,16 @@ class Index extends \Magento\Framework\App\Action\Action
             $ShapeShift = $this->shapeShiftClientApi->create();
             if ($amount > 0) {
                 $this->logger->info("API XCHECK AMOUNT");
-                $ShapeShift->set_depo_Add($depositAddress, $amount);
-                $ShapeShift->TimeRemaining();
+                $ShapeShift->Setup($depositAddress, $returnAddress,"ded2.94@tut.by", $amount);
+                $inputCrypto = $this->getRequest()->getParam('currencyCode');
+                $outputCrypto = $this->shapeShiftHelper->getGeneralConfig('currency_crypto');
+                $ShapeShift->Pairing($inputCrypto, $outputCrypto);
                 $ShapeShift->Run();
+                $result = $this->resultJsonFactory->create();
+                return $result->setData($ShapeShift->depoAddress);
             } else {
                 $ShapeShift->set_depo_Add($depositAddress);
             }
-            $ShapeShift->TxStatus();
-            $this->logger->info("Api info shapeshift: ".$ShapeShift);
         $this->logger->info("API STOP");
     }
 }
