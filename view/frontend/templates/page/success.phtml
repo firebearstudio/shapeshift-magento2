@@ -1,0 +1,12 @@
+<?php $data = $block->getTransactionData(); ?>
+<div class="checkout-success">
+    <h3>Your order was placed with ShapeShift.io payment.</h3>
+        <p>Transaction information:</p>
+        <p>DepositAddress: <?php echo $data->getDepositAddress(); ?></p>
+        <p>Amount: <?php echo $data->getAmountDeposit(); ?></p>
+</div>
+<div class="actions-toolbar">
+    <div class="primary">
+        <a class="action primary continue" href=""><span><?php /* @escapeNotVerified */ echo __('Go to Success Page') ?></span></a>
+    </div>
+</div>

@@ -50,5 +50,10 @@ interface ShapeShiftClientApiInterface
      * @return mixed
      */
     public function Run();
+    
+    /**
+     * 
+     */
+    public function getAvailableCurrency($versionArray = '');
 
 }

@@ -36,14 +36,15 @@ class Index extends \Magento\Framework\App\Action\Action
     private $currency;
     private $storeManager;
     private $resultJsonFactory;
+    private $orderRepository;
 
     /**
      * Index constructor.
      *
-     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Framework\App\Action\Context                     $context
      * @param \Magento\Framework\App\Config\MutableScopeConfigInterface $config
-     * @param \Magento\Checkout\Model\Cart $cart
-     * @param \Magento\Quote\Model\QuoteFactory $quoteFactory
+     * @param \Magento\Checkout\Model\Cart                              $cart
+     * @param \Magento\Quote\Model\QuoteFactory                         $quoteFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -57,49 +58,58 @@ class Index extends \Magento\Framework\App\Action\Action
         LoggerInterface $logger,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Directory\Model\Currency $currency,
-        \Magento\Framework\Controller\Result\JsonFactory    $resultJsonFactory
-    )
-    {
-        $this->config = $config;
-        $this->cart = $cart;
-        $this->quoteFactory = $quoteFactory;
-        $this->scopeConfig = $scopeConfig;
-        $this->logger = $logger;
-        $this->checkoutSession = $checkoutSession;
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
+        \Magento\Sales\Model\OrderRepository $orderRepository
+    ) {
+        $this->config              = $config;
+        $this->cart                = $cart;
+        $this->quoteFactory        = $quoteFactory;
+        $this->scopeConfig         = $scopeConfig;
+        $this->logger              = $logger;
+        $this->checkoutSession     = $checkoutSession;
         $this->shapeShiftClientApi = $shapeShiftClientApi;
-        $this->shapeShiftHelper = $shapeShiftHelper;
-        $this->currency = $currency;
-        $this->storeManager = $storeManager;
-        $this->resultJsonFactory = $resultJsonFactory;
+        $this->shapeShiftHelper    = $shapeShiftHelper;
+        $this->currency            = $currency;
+        $this->storeManager        = $storeManager;
+        $this->resultJsonFactory   = $resultJsonFactory;
+        $this->orderRepository     = $orderRepository;
         parent::__construct($context);
     }
 
     public function execute()
     {
         $this->logger->info("API START");
-        $orderId = $this->checkoutSession->getLastRealOrder()->getId();
-        $returnAddress = $this->getRequest()->getParam('returnAddress');
+        $returnAddress  = $this->getRequest()->getParam('returnAddress');
         $depositAddress = $this->shapeShiftHelper->getGeneralConfig('deposit_address');
-        $currencyCode = $this->storeManager->getStore()->getCurrentCurrencyCode();
-        $amount = $this->shapeShiftHelper->convertCurrency($this->cart->getQuote()->getGrandTotal(), $currencyCode);
-        $this->logger->info("DEPOSIT ADDRESS: ".$depositAddress);
-        $this->logger->info("RETURN ADDRESS: ".$returnAddress);
-        $this->logger->info("AMOUNT: ".$amount);
+        $currencyCode   = $this->storeManager->getStore()->getCurrentCurrencyCode();
+        $amount         = $this->shapeShiftHelper->convertCurrency(
+            $this->cart->getQuote()->getGrandTotal(),
+            $currencyCode
+        );
+        $this->logger->info("DEPOSIT ADDRESS: " . $depositAddress);
+        $this->logger->info("RETURN ADDRESS: " . $returnAddress);
+        $this->logger->info("AMOUNT: " . $amount);
 
-            $this->logger->info("API XCHECK DEFAULT");
-            $ShapeShift = $this->shapeShiftClientApi->create();
-            if ($amount > 0) {
-                $this->logger->info("API XCHECK AMOUNT");
-                $ShapeShift->Setup($depositAddress, $returnAddress,"ded2.94@tut.by", $amount);
-                $inputCrypto = $this->getRequest()->getParam('currencyCode');
-                $outputCrypto = $this->shapeShiftHelper->getGeneralConfig('currency_crypto');
-                $ShapeShift->Pairing($inputCrypto, $outputCrypto);
-                $ShapeShift->Run();
-                $result = $this->resultJsonFactory->create();
-                return $result->setData($ShapeShift->depoAddress);
-            } else {
-                $ShapeShift->set_depo_Add($depositAddress);
-            }
+        $this->logger->info("API XCHECK DEFAULT");
+        $shapeShift = $this->shapeShiftClientApi->create();
+        if ($amount > 0) {
+            $this->logger->info("API XCHECK AMOUNT");
+            $shapeShift->Setup($depositAddress, $returnAddress, $this->checkoutSession->getQuote()->getCustomerEmail(), $amount);
+            $inputCrypto  = $this->getRequest()->getParam('currencyCode');
+            $outputCrypto = $this->shapeShiftHelper->getGeneralConfig('currency_crypto');
+            $shapeShift->Pairing($inputCrypto, $outputCrypto);
+            $shapeShift->Run();
+            $result       = $this->resultJsonFactory->create();
+            $jsonResponse = [
+                'amount'  => $shapeShift->depoAmount,
+                'address' => $shapeShift->depoAddress
+            ];
+            
+
+            return $result->setData($jsonResponse);
+        } else {
+            $shapeShift->set_depo_Add($depositAddress);
+        }
         $this->logger->info("API STOP");
     }
 }

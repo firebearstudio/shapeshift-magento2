@@ -23,7 +23,8 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
     private $outputCrypto;
     private $email;
     private $logger;
-    public $depoAddress;
+    public  $depoAddress;
+    public  $depoAmount;
     private $rate;
     private $limit;
     private $rate_limit;
@@ -33,9 +34,9 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
 
     public function __construct(Curl $curl, LoggerInterface $logger, CurlAdapter $curlAdapter)
     {
-        $this->curl = $curl;
+        $this->curl        = $curl;
         $this->curlAdapter = $curlAdapter;
-        $this->logger = $logger;
+        $this->logger      = $logger;
     }
 
     /**
@@ -53,7 +54,7 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
     {
         header('HTTP/1.1 500 Internal Server Booboo');
         header('Content-Type: application/json; charset=UTF-8');
-        die(json_encode(array('message' => 'ERROR', 'code' => 1337)));
+        die(json_encode(array('message' => $curl, 'API Request' => $error)));
     }
 
     /**
@@ -66,6 +67,7 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
         $curl->setOption(CURLOPT_SSL_VERIFYPEER, true);
         $curl->setOption(CURLOPT_NOSIGNAL, 1);
         $curl->setOption(CURLOPT_TIMEOUT_MS, 1500);
+
         return $curl;
     }
 
@@ -74,10 +76,12 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
      */
     private function Check()
     {
-        if ($this->status === "SUCCESS" && isset($this->amount) && isset($this->withdrawAdd) && isset($this->pair) && isset($this->returnAdd) && isset($this->email)) {
-            return TRUE;
+        if ($this->status === "SUCCESS" && isset($this->amount) && isset($this->withdrawAdd) && isset($this->pair)
+            && isset($this->returnAdd)
+            && isset($this->email)) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -86,20 +90,20 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
      */
     public function Pairing($inputCrypto, $outputCrypto)
     {
-        $this->status = "SUCCESS";
-        $this->inputCrypto = strtolower($inputCrypto);
+        $this->status       = "SUCCESS";
+        $this->inputCrypto  = strtolower($inputCrypto);
         $this->outputCrypto = strtolower($outputCrypto);
-        $this->pair = $this->inputCrypto . "_" . $this->outputCrypto;
+        $this->pair         = $this->inputCrypto . "_" . $this->outputCrypto;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function Setup($withdrawAdd, $returnAdd, $email = "ded2.94@tut.by", $amount = 0)
+    public function Setup($withdrawAdd, $returnAdd, $email, $amount = 0)
     {
         $this->withdrawAdd = $this->xInput($withdrawAdd);
-        $this->returnAdd = $this->xInput($returnAdd);
-        $this->amount = $amount;
+        $this->returnAdd   = $this->xInput($returnAdd);
+        $this->amount      = $amount;
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->email = $this->xInput($email);
         } else {
@@ -194,7 +198,7 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
      */
     public function RecentTx($max = 12)
     {
-        $curl = $this->xCurl();
+        $curl     = $this->xCurl();
         $recenttx = 'https://shapeshift.io/recenttx/' . $max;
         $curl->get($recenttx);
         if (!$curl->error && !isset($curl->response->error)) {
@@ -214,14 +218,14 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
         } elseif ($response->status === "received") {
             $this->txStatus = "PROCESSING";
         } elseif ($response->status === "complete") {
-            $this->txStatus = "COMPLETED";
+            $this->txStatus         = "COMPLETED";
             $this->txStatus->txData = $response;
-            $this->txID = $response->transaction;
+            $this->txID             = $response->transaction;
             if (isset($this->email)) {
                 $this->Mail();
             }
         } elseif ($response->status === "failed") {
-            $this->txStatus = "FAILED";
+            $this->txStatus         = "FAILED";
             $this->txStatus->txData = $response->error;
         }
     }
@@ -343,18 +347,17 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
         $this->logger->info("(CLIENT API Shift_Fixed()) 5");
         $this->logger->info("(CLIENT API Shift_Fixed() DATA SEND: withdrawal) " . $this->withdrawAdd);
         $this->logger->info("(CLIENT API Shift_Fixed() DATA SEND: returnAddress) " . $this->returnAdd);
-        $data = ["amount" => $amount, "withdrawal" => $this->withdrawAdd, "pair" => $this->pair, "returnAddress" => $this->returnAdd];
+        $data = [
+            "amount"        => $amount,
+            "withdrawal"    => $this->withdrawAdd,
+            "pair"          => $this->pair,
+            "returnAddress" => $this->returnAdd
+        ];
         $curl->setOption(CURLOPT_POSTFIELDS, json_encode($data));
         $curl->setOption(CURLOPT_RETURNTRANSFER, true);
         $curl->setOption(CURLOPT_TIMEOUT, 500);
         $this->logger->info("(CLIENT API Shift_Fixed()) 6");
-        try {
-            $curl->post($shift, []);
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            $this->logger->info("(CLIENT API Shift_Fixed()) ERROR" . $e->getMessage());
-            die($e->getMessage());
-        }
+        $curl->post($shift, []);
         $this->logger->info("(CLIENT API Shift_Fixed()) 7");
         $curlDecode = json_decode($curl->getBody(), true);
         $this->logger->info("(CLIENT API Shift_Fixed() DATA)", $curlDecode);
@@ -363,10 +366,12 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
             $this->logger->info("(CLIENT API Shift_Fixed()) 9");
             $this->Set_Depo_Add($curlDecode['success']['deposit']);
             $this->logger->info("(CLIENT API Shift_Fixed()) 10");
-            $this->shift = $curlDecode['success'];
-            $this->quotedRate = number_format($this->shift['quotedRate'], 10) . " " . strtoupper($this->outputCrypto) . " per " . strtoupper($this->inputCrypto);
+            $this->shift      = $curlDecode['success'];
+            $this->quotedRate = number_format($this->shift['quotedRate'], 10) . " " . strtoupper($this->outputCrypto)
+                . " per " . strtoupper($this->inputCrypto);
+            $this->depoAmount = $this->shift['depositAmount'];
         } else {
-            $this->Set_Error("shift_fixed", $curl);
+            $this->Set_Error($shift, $curlDecode['error']);
         }
     }
 
@@ -390,15 +395,18 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
                 return $this;
             } elseif ($this->amount > 0 && $this->status === "SUCCESS") {
                 $this->Shift_Fixed();
+
                 /*$this->TimeRemaining();
                 $this->TxStatus();*/
+
                 return $this;
             } else {
-                return FALSE;
+                return false;
             }
         } else {
             $this->Set_Error("go", "Invoke Setup(...) before using Go()", 1);
-            return FALSE;
+
+            return false;
         }
     }
 
@@ -423,16 +431,19 @@ class ShapeShiftClientApi implements \Firebear\ShapeShift\Api\ShapeShiftClientAp
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAvailableCurrency($versionArray = '')
     {
-        $curl = $this->xCurl();
+        $curl        = $this->xCurl();
         $currencyUrl = 'https://shapeshift.io/getcoins';
         $curl->get($currencyUrl, []);
-        $curlDecode = json_decode($curl->getBody(), true);
+        $curlDecode             = json_decode($curl->getBody(), true);
         $arrayAvailableCurrency = [];
         foreach ($curlDecode as $k => $currency) {
             if ($versionArray == 'adminhtml') {
-                $arrayAvailableCurrency[] = ['label'=>$k,'value'=>strtolower($k)];
+                $arrayAvailableCurrency[] = ['label' => $k, 'value' => strtolower($k)];
             } else {
                 $arrayAvailableCurrency[strtolower($k)] = $k;
             }

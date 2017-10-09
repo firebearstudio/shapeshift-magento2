@@ -27,7 +27,7 @@ define(
                 template: 'Firebear_ShapeShift/payment/form',
                 currencyCode: '',
                 returnAddress: '',
-                depositAddress: '',
+                deposit: '',
                 newErrorMessage: ko.observable(false)
             },
 
@@ -54,7 +54,14 @@ define(
                 };
             },
             afterPlaceOrder: function () {
-                console.log(this.depositAddress);
+                jQuery.ajax({
+                    url: url.build('shapeshift/api/saveTransaction'),
+                    type: 'POST',
+                    dataType: 'json',
+                    showLoader: true,
+                    data: {"depoAmount": this.deposit.amount,"depoAddress": this.deposit.address}
+                });
+                window.location.replace(url.build('shapeshift/page/success/'));
             },
             placeOrder: function (data, event) {
                 var self = this;
@@ -69,7 +76,7 @@ define(
                     showLoader: true,
                     data: {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
                     success: function (data) {
-                        self.depositAddress = data;
+                        self.deposit = data;
                         if (self.validate() && additionalValidators.validate()) {
                             self.isPlaceOrderActionAllowed(false);
 
@@ -78,15 +85,7 @@ define(
                                     function () {
                                         self.isPlaceOrderActionAllowed(true);
                                     }
-                                ).done(
-                                function () {
-                                    self.afterPlaceOrder();
-
-                                    if (self.redirectAfterPlaceOrder) {
-                                        redirectOnSuccessAction.execute();
-                                    }
-                                }
-                            );
+                                ).done(self.afterPlaceOrder.bind(self));
 
                             return true;
                         }
