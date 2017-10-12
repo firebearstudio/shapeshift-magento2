@@ -55,9 +55,9 @@ class TransactionsCheck
             }
             if ($status == 'error') {
                 $orderModel->setState(
-                    Order::STATE_CLOSED,
+                    Order::STATE_CANCELED,
                     true
-                )->setStatus(Order::STATE_CLOSED);
+                )->setStatus(Order::STATE_CANCELED);
                 $transactionModel = $this->transactionsRepository->get($transaction->getId());
                 $this->orderRepository->save($orderModel);
                 $transactionModel->setStatus(3);
