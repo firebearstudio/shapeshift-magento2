@@ -92,4 +92,20 @@ class Transactions extends \Magento\Framework\Model\AbstractModel
     {
         return $this->setData(self::AMOUNT_DEPOSIT, $amountDeposit);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStatus()
+    {
+        return $this->getData(self::STATUS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStatus($status)
+    {
+        return $this->setData(self::STATUS, $status);
+    }
 }

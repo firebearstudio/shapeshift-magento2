@@ -42,6 +42,12 @@ class InstallSchema implements InstallSchemaInterface
             null,
             [],
             'Amount deposit coins to deposit address'
+        )->addColumn(
+            'status',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            [],
+            'Status code'
         )->setComment(
             'Aitoc Dimensional Shipping order boxes'
         );

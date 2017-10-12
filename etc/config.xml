@@ -22,7 +22,11 @@
                 <can_use_checkout>1</can_use_checkout>
                 <is_gateway>1</is_gateway>
                 <sort_order>1</sort_order>
+                <apikey>2106861f10516dabde38412e6568a11890605ccea018377daf8fa4378eeed12f33a7b73bda9ed23250fbbedf939e5101be80218746ac97edca6ab96516d92f73</apikey>
+                <sendamount>https://shapeshift.io/sendamount</sendamount>
+                <getcoins>https://shapeshift.io/getcoins</getcoins>
+                <txstatus>https://shapeshift.io/txStat/</txstatus>
             </shape_shift>
         </payment>
-    </default>`
+    </default>
 </config>

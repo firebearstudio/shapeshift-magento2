@@ -1,0 +1,9 @@
+<?php
+
+$transactionData = $block->getTemplateData();
+?>
+
+Method: ShapeShift
+<p>Transaction Information:</p>
+<p>Address: <?php echo $transactionData['depositAddress']; ?></p>
+<p>Amount: <?php echo $transactionData['depositAmount']; ?></p>

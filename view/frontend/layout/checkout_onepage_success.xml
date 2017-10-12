@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<body>
+    <referenceContainer name="order.success.additional.info">
+        <block class="Firebear\ShapeShift\Block\Page\Success"
+               name="amit.order.success"
+               template="Firebear_ShapeShift::page/success.phtml"
+               after="-">
+        </block>
+    </referenceContainer>
+</body>

@@ -10,21 +10,36 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Firebear\ShapeShift\Model\CurrencyConverter\CoinMarketCapFactory;
+use Firebear\ShapeShift\Model\Client\ShapeShiftClientApiFactory;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\Math\Division;
 
 class Data extends AbstractHelper
 {
     const XML_PATH_CONFIG_COINPAYMENTS = 'payment/shape_shift/';
 
     private $converter;
+    private $log;
+    private $division;
+    private $shapeShiftClientApiFactory;
+
     /**
      * Data constructor.
      *
      * @param Context $context
      */
-    public function __construct(Context $context, CoinMarketCapFactory $converter)
-    {
+    public function __construct(
+        Context $context,
+        CoinMarketCapFactory $converter,
+        LoggerInterface $log,
+        Division $division,
+        ShapeShiftClientApiFactory $shapeShiftClientApiFactory
+    ) {
         parent::__construct($context);
-        $this->converter = $converter;
+        $this->converter                  = $converter;
+        $this->log                        = $log;
+        $this->division                   = $division;
+        $this->shapeShiftClientApiFactory = $shapeShiftClientApiFactory;
     }
 
     /**
@@ -53,11 +68,14 @@ class Data extends AbstractHelper
         return $this->getConfigValue(self::XML_PATH_CONFIG_COINPAYMENTS . $code, $storeId);
     }
 
-    public function convertCurrency($amount, $currency)
+    public function convertCurrency($amount, $currency, $selectCoin)
     {
+        $shapeShiftClientApi = $this->shapeShiftClientApiFactory->create();
+        $currencyName   = $shapeShiftClientApi->getCurrencyFullName($selectCoin);
+        $this->log->info("SELECT CURRENCY NAME: ".$currencyName);
         $converterModel = $this->converter->create();
-        $jsonData = $converterModel->getCurrencyTicker('bitcoin',$currency);
-        $convertedAmount = $amount / $jsonData[0]['price_usd'];
-        return $convertedAmount;
+        $jsonData       = $converterModel->getCurrencyTicker(strtolower($currencyName), $currency);
+
+        return number_format($amount / $jsonData[0]['price_usd'], 10);
     }
 }

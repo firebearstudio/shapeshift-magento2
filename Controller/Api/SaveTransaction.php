@@ -25,6 +25,7 @@ class SaveTransaction extends \Magento\Framework\App\Action\Action
         $this->transactionsRepository = $transactionsRepository;
         $this->checkoutSession        = $checkoutSession;
         parent::__construct($context);
+        
     }
 
     public function execute()
@@ -35,6 +36,7 @@ class SaveTransaction extends \Magento\Framework\App\Action\Action
         $transactionModel->setOrderId($this->checkoutSession->getLastRealOrder()->getId());
         $transactionModel->setAmountDeposit($depoAmount);
         $transactionModel->setDepositAddress($depoAddress);
+        $transactionModel->setStatus(1);
         $this->transactionsRepository->save($transactionModel);
     }
 }

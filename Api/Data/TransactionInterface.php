@@ -18,7 +18,8 @@ interface TransactionInterface
     const ORDER_ID = 'order_id';
     const DEPOSIT_ADDRESS = 'deposit_address';
     const AMOUNT_DEPOSIT = 'amount_deposit';
-
+    const STATUS = 'status';
+    
     /**
      * @return mixed
      */
@@ -66,4 +67,16 @@ interface TransactionInterface
      * @return mixed
      */
     public function setAmountDeposit($amountDeposit);
+
+    /**
+     * @return mixed
+     */
+    public function getStatus();
+
+    /**
+     * @param $status
+     *
+     * @return mixed
+     */
+    public function setStatus($status);
 }

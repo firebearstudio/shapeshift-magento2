@@ -25,8 +25,8 @@ class Success extends \Magento\Framework\View\Element\Template
     public function getTransactionData()
     {
         $orderId          = $this->registry->registry('last_success_order_id');
-        $transactionModel = $this->transactionRepository->getByOrderId($orderId);
-        var_dump($orderId);
+        $this->registry->unregister('last_success_order_id');
+        $transactionModel = $this->transactionRepository->getByOrderId($this->checkoutSession->getLastOrderId());
         return $transactionModel;
     }
 }

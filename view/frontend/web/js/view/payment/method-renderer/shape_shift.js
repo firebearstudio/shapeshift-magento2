@@ -24,10 +24,10 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'Firebear_ShapeShift/payment/form',
-                currencyCode: '',
-                returnAddress: '',
-                deposit: '',
+                template       : 'Firebear_ShapeShift/payment/form',
+                currencyCode   : '',
+                returnAddress  : '',
+                deposit        : '',
                 newErrorMessage: ko.observable(false)
             },
 
@@ -44,38 +44,38 @@ define(
                 return 'shape_shift';
             },
 
-            getData: function () {
+            getData                    : function () {
                 return {
-                    'method': this.item.method,
+                    'method'         : this.item.method,
                     'additional_data': {
-                        'currency_code': this.currencyCode(),
+                        'currency_code' : this.currencyCode(),
                         'return_address': this.returnAddress()
                     }
                 };
             },
-            afterPlaceOrder: function () {
+            afterPlaceOrder            : function () {
                 jQuery.ajax({
-                    url: url.build('shapeshift/api/saveTransaction'),
-                    type: 'POST',
-                    dataType: 'json',
+                    url       : url.build('shapeshift/api/saveTransaction'),
+                    type      : 'POST',
+                    dataType  : 'json',
                     showLoader: true,
-                    data: {"depoAmount": this.deposit.amount,"depoAddress": this.deposit.address}
+                    data      : {"depoAmount": this.deposit.amount, "depoAddress": this.deposit.address}
                 });
-                window.location.replace(url.build('shapeshift/page/success/'));
+                /*window.location.replace(url.build('shapeshift/page/success/'));*/
             },
-            placeOrder: function (data, event) {
+            placeOrder                 : function (data, event) {
                 var self = this;
 
                 if (event) {
                     event.preventDefault();
                 }
                 jQuery.ajax({
-                    url: url.build('shapeshift/api/index'),
-                    type: 'POST',
-                    dataType: "json",
+                    url       : url.build('shapeshift/api/index'),
+                    type      : 'POST',
+                    dataType  : "json",
                     showLoader: true,
-                    data: {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
-                    success: function (data) {
+                    data      : {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
+                    success   : function (data) {
                         self.deposit = data;
                         if (self.validate() && additionalValidators.validate()) {
                             self.isPlaceOrderActionAllowed(false);
@@ -85,12 +85,18 @@ define(
                                     function () {
                                         self.isPlaceOrderActionAllowed(true);
                                     }
-                                ).done(self.afterPlaceOrder.bind(self));
+                                ).done(function () {
+                                self.afterPlaceOrder();
+
+                                if (self.redirectAfterPlaceOrder) {
+                                    redirectOnSuccessAction.execute();
+                                }
+                            });
 
                             return true;
                         }
                     },
-                    error: function(data){
+                    error     : function (data) {
                         self.isPlaceOrderActionAllowed(true);
                         self.newErrorMessage(data.responseText);
                     }
@@ -109,7 +115,7 @@ define(
                 console.log(window.checkoutConfig.payment.shape_shift.currencyCode);
                 return _.map(window.checkoutConfig.payment.shape_shift.currencyCode, function (value, key) {
                     return {
-                        'value': key,
+                        'value'        : key,
                         'currency_code': value
                     }
                 });

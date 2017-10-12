@@ -11,16 +11,16 @@
                 <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
-                <field id="merchant_gateway_key" translate="label" type="obscure" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Merchant Gateway Key</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                </field>
-                <field id="currency_crypto" translate="label comment" sortOrder="4" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="currency_crypto" translate="label comment" sortOrder="3" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>What currency do you want to receive?</label>
                     <source_model>Firebear\ShapeShift\Model\Adminhtml\Source\CryptoCurrency</source_model>
                 </field>
-                <field id="deposit_address" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="deposit_address" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Deposit Address</label>
+                </field>
+                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Paid order status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
                 <field id="debug" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Debug</label>

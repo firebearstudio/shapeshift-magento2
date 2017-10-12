@@ -18,7 +18,7 @@ class TransactionsRepository implements \Firebear\ShapeShift\Api\TransactionsRep
     protected $transactionsModelResource;
     protected $transactionsModelFactory;
     private $log;
-
+    
     /**
      * TransactionsRepository constructor.
      *
@@ -75,10 +75,10 @@ class TransactionsRepository implements \Firebear\ShapeShift\Api\TransactionsRep
             if (!$transactionModel->getId()) {
                 return false;
             }
-            $this->entities[$itemId] = $boxModel;
+            $this->entities[$id] = $transactionModel;
         }
 
-        return $this->entities[$itemId];
+        return $this->entities[$id];
     }
 
     /**
