@@ -53,7 +53,7 @@ class TransactionsCheck
                 $transactionModel->setStatus(2);
                 $this->transactionsRepository->save($transactionModel);
             }
-            if ($status == 'error') {
+            if ($status == 'failed') {
                 $orderModel->setState(
                     Order::STATE_CANCELED,
                     true
