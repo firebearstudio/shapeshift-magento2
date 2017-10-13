@@ -82,7 +82,7 @@ class Index extends \Magento\Framework\App\Action\Action
         $returnAddress  = $this->getRequest()->getParam('returnAddress');
         $depositAddress = $this->shapeShiftHelper->getGeneralConfig('deposit_address');
         $currencyCode   = $this->storeManager->getStore()->getCurrentCurrencyCode();
-        $outputCrypto = $this->shapeShiftHelper->getGeneralConfig('currency_crypto');
+        $outputCrypto   = $this->shapeShiftHelper->getGeneralConfig('currency_crypto');
         $amount         = $this->shapeShiftHelper->convertCurrency(
             $this->cart->getQuote()->getGrandTotal(),
             $currencyCode,
@@ -94,21 +94,21 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $this->logger->info("API XCHECK DEFAULT");
         $shapeShift = $this->shapeShiftClientApi->create();
-        if ($amount > 0) {
-            $this->logger->info("API XCHECK AMOUNT");
-            $inputCrypto  = $this->getRequest()->getParam('currencyCode');
-            $shapeShift->sendFixedAmount($amount, $depositAddress, $returnAddress, $inputCrypto, $outputCrypto);
-            $result       = $this->resultJsonFactory->create();
+        $this->logger->info("API XCHECK AMOUNT");
+        $inputCrypto = $this->getRequest()->getParam('currencyCode');
+        $shapeShift->sendFixedAmount($amount, $depositAddress, $returnAddress, $inputCrypto, $outputCrypto);
+        $result = $this->resultJsonFactory->create();
+        if (isset($shapeShift->error['error'])) {
+            $jsonResponse = $shapeShift->error;
+        } else {
             $jsonResponse = [
                 'amount'  => $shapeShift->depoAmount,
                 'address' => $shapeShift->depoAddress
             ];
-
-
-            return $result->setData($jsonResponse);
-        } else {
-            $shapeShift->set_depo_Add($depositAddress);
         }
+
+
+        return $result->setData($jsonResponse);
         $this->logger->info("API STOP");
     }
 }

@@ -77,28 +77,29 @@ define(
                     data      : {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
                     success   : function (data) {
                         self.deposit = data;
-                        if (self.validate() && additionalValidators.validate()) {
-                            self.isPlaceOrderActionAllowed(false);
-
-                            self.getPlaceOrderDeferredObject()
-                                .fail(
-                                    function () {
-                                        self.isPlaceOrderActionAllowed(true);
-                                    }
-                                ).done(function () {
-                                self.afterPlaceOrder();
-
-                                if (self.redirectAfterPlaceOrder) {
-                                    redirectOnSuccessAction.execute();
-                                }
-                            });
-
-                            return true;
+                        if (self.deposit.error) {
+                            self.isPlaceOrderActionAllowed(true);
+                            self.newErrorMessage('Message: '+self.deposit.error+' Request: '+self.deposit.url);
                         }
-                    },
-                    error     : function (data) {
-                        self.isPlaceOrderActionAllowed(true);
-                        self.newErrorMessage(data.responseText);
+                        else {
+                            if (self.validate() && additionalValidators.validate()) {
+                                self.isPlaceOrderActionAllowed(false);
+                                self.getPlaceOrderDeferredObject()
+                                    .fail(
+                                        function () {
+                                            self.isPlaceOrderActionAllowed(true);
+                                        }
+                                    ).done(function () {
+                                    self.afterPlaceOrder();
+
+                                    if (self.redirectAfterPlaceOrder) {
+                                        redirectOnSuccessAction.execute();
+                                    }
+                                });
+
+                                return true;
+                            }
+                        }
                     }
                 });
 

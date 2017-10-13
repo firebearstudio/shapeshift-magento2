@@ -12,6 +12,7 @@ class ShapeShiftClientApi
     public $depoAddress;
     public $depoAmount;
     private $log;
+    public $error;
 
     public function __construct(Data $helper, LoggerInterface $log)
     {
@@ -130,8 +131,7 @@ class ShapeShiftClientApi
     
     private function setError($error, $url)
     {
-        header('HTTP/1.1 500 Internal Server');
-        header('Content-Type: application/json; charset=UTF-8');
-        die(json_encode(array('message' => $error, 'API Request' => $url)));
+        $this->error['error'] = $error;
+        $this->error['url'] = $url;
     }
 }
