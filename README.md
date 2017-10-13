@@ -1,6 +1,6 @@
 # ShapeShift for Magento2 - Accept BitCoin, Ethereum and other cryptocurrencies without transations fee and registration
 
-<img src="https://firebearstudio.com/blog/wp-content/uploads/2017/10/Firebear-ShapeShift.png" />
+<img src="https://firebearstudio.com/blog/wp-content/uploads/2017/10/Firebear-ShapeShift.png" width="200" />
 
 - Accept all possible altcoins on Magento 2 websites;
 - Support for all major cryptocurrencies;
