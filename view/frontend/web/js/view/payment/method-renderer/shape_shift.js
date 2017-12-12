@@ -79,7 +79,7 @@ define(
                         self.deposit = data;
                         if (self.deposit.error) {
                             self.isPlaceOrderActionAllowed(true);
-                            self.newErrorMessage('Message: '+self.deposit.error+' Request: '+self.deposit.url);
+                            self.newErrorMessage('Message: ' + self.deposit.error + ' Request: ' + self.deposit.url);
                         }
                         else {
                             if (self.validate() && additionalValidators.validate()) {
@@ -113,13 +113,16 @@ define(
             },
 
             getAvailableCurrency: function () {
-                console.log(window.checkoutConfig.payment.shape_shift.currencyCode);
                 return _.map(window.checkoutConfig.payment.shape_shift.currencyCode, function (value, key) {
                     return {
                         'value'        : key,
                         'currency_code': value
                     }
                 });
+            },
+
+            getPaymentDescription: function () {
+                return window.checkoutConfig.payment.shape_shift.paymentDescription;
             }
         });
     }

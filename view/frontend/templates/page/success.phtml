@@ -1,7 +1,9 @@
 <?php $data = $block->getTransactionData(); ?>
-<div class="checkout-success">
-    <h3>Your order was placed with ShapeShift.io payment.</h3>
+<?php if ($data->getData()): ?>
+    <div class="checkout-success">
+        <h3>Your order was placed with ShapeShift.io payment.</h3>
         <p>Transaction information:</p>
         <p>DepositAddress: <?php echo $data->getDepositAddress(); ?></p>
         <p>Amount: <?php echo $data->getAmountDeposit(); ?></p>
-</div>
+    </div>
+<?php endif; ?>

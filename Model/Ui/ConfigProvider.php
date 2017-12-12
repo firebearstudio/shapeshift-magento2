@@ -34,7 +34,8 @@ final class ConfigProvider implements ConfigProviderInterface
         $configArray = [
             'payment' => [
                 self::CODE => [
-                    'currencyCode' => $shapeShiftClientApiModel->getAvailableCurrency()
+                    'currencyCode' => $shapeShiftClientApiModel->getAvailableCurrency(),
+                    'paymentDescription' => $shapeShiftClientApiModel->getPaymentDescription()
                 ]
             ]
         ];

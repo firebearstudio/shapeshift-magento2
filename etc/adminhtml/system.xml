@@ -4,44 +4,59 @@
         <section id="payment">
             <group id="shape_shift" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Shape Shift Payment</label>
-                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="active" translate="label comment" sortOrder="10" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
-                <field id="currency_crypto" translate="label comment" sortOrder="3" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="description" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description</label>
+                </field>
+                <field id="currency_crypto" translate="label comment" sortOrder="40" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>What currency do you want to receive?</label>
                     <source_model>Firebear\ShapeShift\Model\Adminhtml\Source\CryptoCurrency</source_model>
                 </field>
-                <field id="deposit_address" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="deposit_address" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Deposit Address</label>
                 </field>
-                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="status_order_paid" translate="label,comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Paid order status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
-                <field id="debug" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="debug" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="payment_action" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="payment_action" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Payment Action</label>
                     <source_model>Firebear\ShapeShift\Model\Adminhtml\Source\PaymentAction</source_model>
                 </field>
-                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="8" showInDefault="9"
+                <field id="allowcurrency" translate="label" type="multiselect" sortOrder="81" showInDefault="9" showInWebsite="1" showInStore="0">
+                    <label>Allow currency</label>
+                    <source_model>Firebear\ShapeShift\Model\Config\Allowcurrency</source_model>
+                </field>
+                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="90" showInDefault="9"
                        showInWebsite="1" showInStore="0">
                     <label>Payment From Applicable Countries</label>
                     <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
                 </field>
-                <field id="specificcountry" translate="label" type="multiselect" sortOrder="9" showInDefault="1"
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="100" showInDefault="1"
                        showInWebsite="1" showInStore="0">
                     <label>Payment From Specific Countries</label>
                     <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
                 </field>
-                <field id="sort_order" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sort_order" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="max_limit_price" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                     <label>Max limit price</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="min_limit_price" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
+                     <label>Min limit price</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>

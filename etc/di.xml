@@ -138,4 +138,7 @@
             <argument name="config" xsi:type="object">ShapeShiftGatewayConfig</argument>
         </arguments>
     </type>
+    <type name="Magento\Payment\Model\Method\Adapter">
+        <plugin name="firebear_shapeshift_available_method" type="Firebear\ShapeShift\Plugin\Payment\Model\Method\Adapter" sortOrder="1"/>
+    </type>
 </config>

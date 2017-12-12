@@ -3,7 +3,7 @@
  * @copyright: Copyright © 2017 Firebear Studio. All rights reserved.
  * @author   : Firebear Studio <fbeardev@gmail.com>
  */
- 
+
 namespace Firebear\ShapeShift\Model\Client;
 
 use Firebear\ShapeShift\Helper\Data;
@@ -50,20 +50,38 @@ class ShapeShiftClientApi
         }
 
     }
-    
+
     public function getAvailableCurrency($versionArray = '')
     {
-        $responseArray          = $this->sendReqestGet($this->helper->getGeneralConfig('getcoins'));
-        $arrayAvailableCurrency = [];
+        $responseArray             = $this->sendReqestGet($this->helper->getGeneralConfig('getcoins'));
+        $arrayAvailableCurrency    = [];
+        $arrayAvailableCurrencyAll = [];
         foreach ($responseArray as $k => $currency) {
             if ($versionArray == 'adminhtml') {
                 $arrayAvailableCurrency[] = ['label' => $k, 'value' => strtolower($k)];
             } else {
-                $arrayAvailableCurrency[strtolower($k)] = $k;
+                $arrayAvailableCurrencyAll[strtolower($k)] = $k;
             }
         }
 
+        if ($versionArray != 'adminhtml') {
+            $currencyAvailable = explode(',', $this->helper->getGeneralConfig('allowcurrency'));
+            if ($this->helper->getGeneralConfig('allowcurrency')) {
+                foreach ($currencyAvailable as $currency) {
+                    $arrayAvailableCurrency[$currency] = strtoupper($currency);
+                }
+            } else {
+                $arrayAvailableCurrency = $arrayAvailableCurrencyAll;
+            }
+        }
+
+
         return $arrayAvailableCurrency;
+    }
+
+    public function getPaymentDescription()
+    {
+        return $this->helper->getGeneralConfig('description');
     }
 
     public function getCurrencyFullName($code)
@@ -132,10 +150,10 @@ class ShapeShiftClientApi
     {
         $this->pair = $inputCrypto . "_" . $outputCrypto;
     }
-    
+
     private function setError($error, $url)
     {
         $this->error['error'] = $error;
-        $this->error['url'] = $url;
+        $this->error['url']   = $url;
     }
 }
