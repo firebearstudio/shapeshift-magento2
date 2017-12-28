@@ -69,39 +69,46 @@ define(
                 if (event) {
                     event.preventDefault();
                 }
-                jQuery.ajax({
-                    url       : url.build('shapeshift/api/index'),
-                    type      : 'POST',
-                    dataType  : "json",
-                    showLoader: true,
-                    data      : {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
-                    success   : function (data) {
-                        self.deposit = data;
-                        if (self.deposit.error) {
-                            self.isPlaceOrderActionAllowed(true);
-                            self.newErrorMessage('Message: ' + self.deposit.error + ' Request: ' + self.deposit.url);
-                        }
-                        else {
-                            if (self.validate() && additionalValidators.validate()) {
-                                self.isPlaceOrderActionAllowed(false);
-                                self.getPlaceOrderDeferredObject()
-                                    .fail(
-                                        function () {
-                                            self.isPlaceOrderActionAllowed(true);
+                if (this.currencyCode()) {
+                    jQuery.ajax({
+                        url       : url.build('shapeshift/api/index'),
+                        type      : 'POST',
+                        dataType  : "json",
+                        showLoader: true,
+                        data      : {"returnAddress": this.returnAddress(), "currencyCode": this.currencyCode()},
+                        success   : function (data) {
+                            self.deposit = data;
+                            if (self.deposit.error) {
+                                self.isPlaceOrderActionAllowed(true);
+                                self.newErrorMessage('Message: ' + self.deposit.error + ' Request: ' + self.deposit.url);
+                            }
+                            else {
+                                if (self.validate() && additionalValidators.validate()) {
+                                    self.isPlaceOrderActionAllowed(false);
+                                    self.getPlaceOrderDeferredObject()
+                                        .fail(
+                                            function () {
+                                                self.isPlaceOrderActionAllowed(true);
+                                            }
+                                        ).done(function () {
+                                        self.afterPlaceOrder();
+
+                                        if (self.redirectAfterPlaceOrder) {
+                                            redirectOnSuccessAction.execute();
                                         }
-                                    ).done(function () {
-                                    self.afterPlaceOrder();
+                                    });
 
-                                    if (self.redirectAfterPlaceOrder) {
-                                        redirectOnSuccessAction.execute();
-                                    }
-                                });
-
-                                return true;
+                                    return true;
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
+                else 
+                {
+                    self.isPlaceOrderActionAllowed(true);
+                    self.newErrorMessage('Message: Please select Currency code');
+                }
 
                 return false;
 

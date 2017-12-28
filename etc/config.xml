@@ -27,7 +27,7 @@
                 <getcoins>https://shapeshift.io/getcoins</getcoins>
                 <txstatus>https://shapeshift.io/txStat/</txstatus>
                 <min_limit_price>0</min_limit_price>
-                <min_limit_price>1000</min_limit_price>
+                <max_limit_price>1000</max_limit_price>
                 <description>ShapeShift cryptocurrency payment method</description>
             </shape_shift>
         </payment>
