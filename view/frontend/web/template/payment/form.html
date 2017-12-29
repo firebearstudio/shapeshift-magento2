@@ -16,7 +16,7 @@
         </label>
     </div>
     <span class="shape_shift_description" data-bind="html: getPaymentDescription()"></span>
-    <div class="payment-method-content">
+    <div class="payment-method-content fieldset">
         <!-- ko foreach: getRegion('messages') -->
         <!-- ko template: getTemplate() --><!-- /ko -->
         <!--/ko-->
@@ -46,6 +46,8 @@
                                   value: currencyCode">
                 </select>
             </div>
+        </div>
+        <div class="field">
             <label data-bind="attr: {for: getCode() + '_return_address'}" class="label">
                 <span><!-- ko i18n: 'Return wallet address (you will receive your funds back to this address in case of any issues or refund, must be same cryptocurrency which is used for order)'-->
                     <!-- /ko --></span>
