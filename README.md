@@ -14,6 +14,8 @@
 
 <a href="https://www.youtube.com/watch?v=dMk2T-06kxM" target="_blank">Video overview</a>
 
+Extension compatible with all recent versions of Magento 2.0.x , 2.1.x, 2.2.x Open Source (Community), Commerce (Enterprise) and Cloud Edition!
+
 <b>At this moment to accept BitCoin (BTC) with this extension you need to enter wallet of different cryptocurrency to receive (we advise Ethereum) - amounts of placed orders will be converted automatically without additional fees (only miner fee) by ShapeShift. Currently, BitCoins fee are very high and also network is slow, so consider Ethereum and other altcoins!</b>
 
 Alternative payment gateway where you can directly accept BitCoin and altcoins with registration, friendly interface, and withdrawal to fiat - <a href="https://firebearstudio.com/coinpayments-for-magento-2-bitcoin-ethereum-cryptocurrency.html">CoinPayments for Magento 2</a>
