@@ -30,9 +30,9 @@ class Adapter
         CartInterface $quote = null
     ) {
         if ($subject->getCode() == 'shape_shift') {
-            $quote = $this->checkoutSession->getQuote();
+            $quote   = $this->checkoutSession->getQuote();
             $country = $quote->getBillingAddress()->getCountry();
-            if($this->shapeShiftHelper->getGeneralConfig('allowspecific')) {
+            if ($this->shapeShiftHelper->getGeneralConfig('allowspecific')) {
                 $allowedCountry = explode(',', $this->shapeShiftHelper->getGeneralConfig('specificcountry'));
                 if (!in_array($country, $allowedCountry)) {
                     return false;
