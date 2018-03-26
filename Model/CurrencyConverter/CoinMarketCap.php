@@ -44,6 +44,10 @@ class CoinMarketCap {
      * @return array
      */
     public static function getCurrencyTicker($currency = "bitcoin", $convert = "USD") {
+        if($currency == 'ether')
+        {
+            $currency = 'ethereum';
+        }
         return Request::exec(self::API_URL . "ticker/{$currency}/", [
             'convert' => $convert
         ]);

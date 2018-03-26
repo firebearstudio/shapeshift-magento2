@@ -45,8 +45,15 @@ class ShapeShiftClientApi
                 $this->helper->getGeneralConfig('sendamount')
             );
         } else {
-            $this->depoAddress = $responseArray['success']['deposit'];
-            $this->depoAmount  = $responseArray['success']['depositAmount'];
+            if (!isset($responseArray['success']['deposit'])) {
+                $this->setError(
+                    'Payment method is not available. Deposit address not set.',
+                    $this->helper->getGeneralConfig('sendamount')
+                );
+            } else {
+                $this->depoAddress = $responseArray['success']['deposit'];
+                $this->depoAmount  = $responseArray['success']['depositAmount'];
+            }
         }
 
     }

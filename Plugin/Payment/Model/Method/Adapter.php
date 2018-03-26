@@ -31,6 +31,13 @@ class Adapter
     ) {
         if ($subject->getCode() == 'shape_shift') {
             $quote = $this->checkoutSession->getQuote();
+            $country = $quote->getBillingAddress()->getCountry();
+            if($this->shapeShiftHelper->getGeneralConfig('allowspecific')) {
+                $allowedCountry = explode(',', $this->shapeShiftHelper->getGeneralConfig('specificcountry'));
+                if (!in_array($country, $allowedCountry)) {
+                    return false;
+                }
+            }
             if ($quote->getGrandTotal() > $this->shapeShiftHelper->getGeneralConfig('max_limit_price')
                 || $quote->getGrandTotal() < $this->shapeShiftHelper->getGeneralConfig('min_limit_price')) {
                 return false;

@@ -20,7 +20,7 @@
     <!-- Configuration reader -->
     <virtualType name="ShapeShiftGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Firebear\SHapeShift\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">\Firebear\ShapeShift\Model\Ui\ConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
 
