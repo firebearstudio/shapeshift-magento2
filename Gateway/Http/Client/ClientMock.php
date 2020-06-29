@@ -83,7 +83,7 @@ class ClientMock implements ClientInterface
      */
     protected function generateTxnId()
     {
-        return md5(mt_rand(0, 1000));
+        return hash('sha256', random_int(0, 1000));
     }
 
     /**
@@ -100,7 +100,7 @@ class ClientMock implements ClientInterface
             return (int)$headers['force_result'];
         }
 
-        return $this->results[mt_rand(0, 1)];
+        return $this->results[random_int(0, 1)];
     }
 
     /**

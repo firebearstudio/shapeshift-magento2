@@ -12,7 +12,7 @@ use Firebear\ShapeShift\Model\Client\ShapeShiftClientApiFactory;
 /**
  * Class ConfigProvider
  */
-final class ConfigProvider implements ConfigProviderInterface
+class ConfigProvider implements ConfigProviderInterface
 {
     private $shapeShiftClientApiFactory;
 
